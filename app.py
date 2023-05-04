@@ -25,15 +25,17 @@ class DataResource(Resource):
     # method post
     def post(self):
         name = request.json["name"]
+        age = request.json["age"]
         address = request.json["address"]
         
         data["name"] = name
+        data["age"] = age
         data["address"] = address
         
         response = {"message":"Data added successfully"}
         return response
 
-api.add_resource(DataResource, "/", methods=["GET", "POST"])
+api.add_resource(DataResource, "/api", methods=["GET", "POST"])
 
 if __name__ == "__main__":
     app.run(debug=True, port=1000)
