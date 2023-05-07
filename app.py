@@ -40,7 +40,7 @@ class DatabaseModel(db.Model):
             return True
         except:
             return False
-            
+
 
 # resource model
 class DataResource(Resource):
@@ -50,7 +50,7 @@ class DataResource(Resource):
         query = DatabaseModel.query.all()
 
         output = [
-            {"name":data.name, "age":data.age, "address":data.address} for data in query
+            {"id":data.id, "name":data.name, "age":data.age, "address":data.address} for data in query
         ]
         
         response = {
@@ -71,14 +71,53 @@ class DataResource(Resource):
         modelDatabase = DatabaseModel(name=name, age=age, address=address)
         modelDatabase.save()
         
-        
         response = {
-            "message":"Data added successfully",
+            "message":"Data Added Successfully",
             "code": 200
         }
         return response
+    
+#  updtae model
+class UpdateResource(Resource):
+    
+    # update method
+    def put(self, id):
+        query = DatabaseModel.query.get(id)
+        
+        newName = request.json["name"]
+        newAge = request.json["age"]
+        newAddress = request.json["address"]
+        
+        query.name = newName
+        query.age = newAge
+        query.address = newAddress
+        
+        db.session.commit()
+        
+        response = {
+            "message": "Data Edited Successfully!",
+            "code": 200
+        }
+        
+        return response
+    
+    # delete method
+    def delete(self, id):
+        query = DatabaseModel.query.get(id)
+        
+        db.session.delete(query)
+        db.session.commit()
+
+        response = {
+            "message": "Data Deleted Successfully!",
+            "code": 200
+        }
+        
+        return response
+
 
 api.add_resource(DataResource, "/api", methods=["GET", "POST"])
+api.add_resource(UpdateResource, "/api/<id>", methods=["PUT", "DELETE"])
 
 if __name__ == "__main__":
     app.run(debug=True, port=1000)
